@@ -56,7 +56,7 @@ export class TwitchClass {
 
     game = game => this.get(`/games?name=${game}`);
 
-    clips = (gameId, start) => this.get(`/clips?game_id=${gameId}&started_at=${start}`);
+    clips = (gameId, start) => this.get(`/clips?game_id=${gameId}&started_at=${start}&first=100`);
 
     // hardcode the OAuth token as it requires a user that is auth'd with the Twitch site
     clipData = async slug => {

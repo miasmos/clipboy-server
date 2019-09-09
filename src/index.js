@@ -17,9 +17,17 @@ const getGame = async (name, start) => {
         const game = await Twitch.game(name);
         const startedAt = start.format('YYYY-MM-DDTHH:mm:ss') + 'Z';
         const clips = await Twitch.clips(game.data[0].id, startedAt);
+        const filtered = clips.data
+            .filter(clip => {
+                const hasDomain = clip.title.match(/\.(com|net|ca)/i);
+                return !(hasDomain && hasDomain.length > 0);
+            })
+            .filter(clip => clip.language === 'en')
+            .sort((a, b) => b.view_count - a.view_count)
+            .slice(0, 30);
 
         await Promise.all(
-            clips.data.map(async ({ id, broadcaster_name, title, view_count, thumbnail_url }) => {
+            filtered.map(async ({ id, broadcaster_name, title, view_count, thumbnail_url }) => {
                 const clipData = await Twitch.clipData(id);
                 const thumbData = await Twitch.thumbnailData(thumbnail_url);
                 await fsp.writeFile(path.resolve(__dirname, outputFolder, `${id}.mp4`), clipData);
@@ -30,7 +38,7 @@ const getGame = async (name, start) => {
             })
         );
 
-        const data = clips.data.reduce((prev, clip) => {
+        const data = filtered.reduce((prev, clip) => {
             prev[clip.id] = clip;
             return prev;
         }, {});
@@ -47,7 +55,7 @@ const getGame = async (name, start) => {
 };
 
 (async () => {
-    const gameName = 'Just Chatting';
+    const gameName = 'World of Warcraft';
     outputFolder = `${outputFolder}/${gameName}`;
     try {
         await fsp.stat(path.resolve(__dirname, outputFolder));
