@@ -1,7 +1,10 @@
 {
     "name": "twitch-clip-scraper",
     "version": "1.0.0",
-    "main": "index.js",
+    "main": "dist/index.js",
+    "bin": {
+        "twitchclip": "./bin/index.js"
+    },
     "scripts": {
         "start": "yarn build && yarn server",
         "build": "webpack --mode=development",
@@ -14,7 +17,8 @@
         "dayjs": "^1.8.16",
         "request": "^2.88.0",
         "request-promise": "^4.2.4",
-        "snoowrap": "^1.19.0"
+        "snoowrap": "^1.19.0",
+        "yargs": "^14.0.0"
     },
     "devDependencies": {
         "@babel/core": "^7.6.0",
