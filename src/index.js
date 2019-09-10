@@ -24,9 +24,13 @@ yargs
     .option('start', {
         alias: 's',
         default: false
+    })
+    .option('count', {
+        alias: 'c',
+        default: false
     });
 
-const getGame = async ({ game: name, start, oauth, path: targetPath }) => {
+const getGame = async ({ game: name, start, oauth, path: targetPath, count: clipCount }) => {
     try {
         await Twitch.init(oauth);
         const game = await Twitch.game(name);
@@ -39,7 +43,7 @@ const getGame = async ({ game: name, start, oauth, path: targetPath }) => {
             })
             .filter(clip => clip.language === 'en')
             .sort((a, b) => b.view_count - a.view_count)
-            .slice(0, 30);
+            .slice(0, clipCount);
 
         await Promise.all(
             filtered.map(async ({ id, broadcaster_name, title, view_count, thumbnail_url }) => {
@@ -102,6 +106,12 @@ const getConfig = () => {
     } else {
         console.error('start is required');
         process.exit(1);
+    }
+
+    if (yargs.argv.count || yargs.argv.c) {
+        config.count = yargs.argv.count || yargs.argv.c;
+    } else {
+        config.count = 100;
     }
 
     return config;
