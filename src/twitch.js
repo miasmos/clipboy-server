@@ -23,12 +23,12 @@ export class TwitchClass {
         });
         this.oauthToken = oauthToken;
         this.accessToken = access_token;
-        this.clientId = await this.clientId();
+        this.clientId = await this.getClientId();
 
         setTimeout(this.init, 24 * 60 * 60 * 1000);
     };
 
-    clientId = async () => {
+    getClientId = async () => {
         const homepage = await rp({ uri: 'https://twitch.tv', simple: false });
         let regex = new RegExp(
             '(https://static.twitchcdn.net/assets/core-[a-z0-9]{19,22}.js)',
@@ -94,7 +94,7 @@ export class TwitchClass {
             return data;
         }
 
-        return undefined;
+        throw new Error('Failed to get clip data. Is your oauth token valid?');
     };
 
     thumbnailData = uri =>
