@@ -56,8 +56,8 @@ export class TwitchClass {
 
     game = game => this.get(`/games?name=${game}`);
 
-    clips = (gameId, start, count = 100) =>
-        this.get(`/clips?game_id=${gameId}&started_at=${start}&first=${count}`);
+    clips = (gameId, start, end, count = 100) =>
+        this.get(`/clips?game_id=${gameId}&started_at=${start}&ended_at=${end}&first=${count}`);
 
     // hardcode the OAuth token as it requires a user that is auth'd with the Twitch site
     clipData = async slug => {
@@ -104,8 +104,9 @@ export class TwitchClass {
             simple: false
         });
 
-    get = async path =>
-        rp({
+    get = async path => {
+        console.log(`GET https://api.twitch.tv/helix${path}`, this.accessToken);
+        return rp({
             uri: `https://api.twitch.tv/helix${path}`,
             headers: {
                 Authorization: `Bearer ${this.accessToken}`
@@ -113,6 +114,7 @@ export class TwitchClass {
             json: true,
             simple: false
         });
+    };
 
     post = async path =>
         rp({

@@ -9,7 +9,7 @@ export const server = () => {
     app.use(bodyparser());
     app.get('/', (req, res) => res.json({ alive: true }));
     app.post('/clips', async (req, res) => {
-        const { oauth, game, start, count, path } = req.body;
+        const { oauth, game, start, count, path, end } = req.body;
         console.log('GET /clips');
 
         if (!oauth) {
@@ -44,6 +44,13 @@ export const server = () => {
             res.status(400).json({ code: 7, message: 'start must be YYYY-MM-DD' });
             return;
         }
+        if (end) {
+            regex = end.match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}/g);
+            if (!(regex && regex.length > 0)) {
+                res.status(400).json({ code: 7, message: 'end must be YYYY-MM-DD' });
+                return;
+            }
+        }
 
         if (oauth.length !== 30) {
             res.status(400).json({ code: 8, message: 'oauth must be of length 30' });
@@ -51,7 +58,14 @@ export const server = () => {
         }
 
         try {
-            const data = await getGame(game, dayjs(start, 'YYYY-MM-DD'), oauth, path, count);
+            const data = await getGame(
+                game,
+                dayjs(start, 'YYYY-MM-DD'),
+                end ? dayjs(end, 'YYYY-MM-DD') : undefined,
+                oauth,
+                path,
+                count
+            );
             res.json(data);
         } catch (error) {
             console.error(error);
