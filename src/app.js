@@ -7,15 +7,24 @@ const path = require('path');
 
 const fsp = fs.promises;
 
-export const getGame = async (name, start, end, oauth, targetPath, clipCount = 100) => {
-    targetPath = targetPath.replace(/^UNC/g, '\\');
+Promise.series = providers => {
+    const ret = Promise.resolve(null);
+    const results = [];
 
-    try {
-        await fsp.stat(path.resolve(targetPath));
-    } catch {
-        await fsp.mkdir(path.resolve(targetPath), { recursive: true });
-    }
+    return providers
+        .reduce(function(result, provider, index) {
+            return result.then(function() {
+                return provider().then(function(val) {
+                    results[index] = val;
+                });
+            });
+        }, ret)
+        .then(function() {
+            return results;
+        });
+};
 
+export const getGame = async (name, start, end, oauth, clipCount = 100) => {
     try {
         await Twitch.init(oauth);
         const game = await Twitch.game(name);
@@ -28,7 +37,6 @@ export const getGame = async (name, start, end, oauth, targetPath, clipCount = 1
         if (!clips.data) {
             console.error(clips);
             throw new Error('Failed to get clips');
-            return;
         }
         const filtered = clips.data
             .filter(clip => {
@@ -39,32 +47,23 @@ export const getGame = async (name, start, end, oauth, targetPath, clipCount = 1
             .sort((a, b) => b.view_count - a.view_count)
             .slice(0, clipCount);
 
-        await Promise.all(
-            filtered.map(async ({ id, thumbnail_url }) => {
-                try {
-                    // if it doesn't exist, throw an error and download
-                    await fsp.stat(path.resolve(targetPath, `${id}.mp4`));
-                } catch {
-                    const clipData = await Twitch.clipData(id);
-                    await fsp.writeFile(path.resolve(targetPath, `${id}.mp4`), clipData);
+        const data = await Promise.series(
+            filtered.map(
+                ({
+                    embed_url,
+                    creator_id,
+                    creator_name,
+                    video_id,
+                    game_id,
+                    language,
+                    ...data
+                }) => async () => {
+                    const url = await Twitch.clipUrl(data.id);
+                    return { ...data, clip_url: url };
                 }
-
-                try {
-                    // if it doesn't exist, throw an error and download
-                    await fsp.stat(path.resolve(targetPath, `${id}.jpg`));
-                } catch {
-                    const thumbData = await Twitch.thumbnailData(thumbnail_url);
-                    await fsp.writeFile(path.resolve(targetPath, `${id}.jpg`), thumbData);
-                }
-            })
+            )
         );
 
-        const data = filtered.reduce((prev, clip) => {
-            prev[clip.id] = clip;
-            return prev;
-        }, {});
-
-        await fsp.writeFile(path.resolve(targetPath, './data.json'), JSON.stringify(data));
         return data;
     } catch (error) {
         console.error(error);

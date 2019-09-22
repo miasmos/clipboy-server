@@ -9,7 +9,7 @@ export const server = () => {
     app.use(bodyparser());
     app.get('/', (req, res) => res.json({ alive: true }));
     app.post('/clips', async (req, res) => {
-        const { oauth, game, start, count, path, end } = req.body;
+        const { oauth, game, start, count, end } = req.body;
         console.log('GET /clips');
 
         if (!oauth) {
@@ -22,10 +22,6 @@ export const server = () => {
         }
         if (!start) {
             res.status(400).json({ code: 3, message: 'start is required' });
-            return;
-        }
-        if (!path) {
-            res.status(400).json({ code: 4, message: 'path is required' });
             return;
         }
 
@@ -63,7 +59,6 @@ export const server = () => {
                 dayjs(start, 'YYYY-MM-DD'),
                 end ? dayjs(end, 'YYYY-MM-DD') : undefined,
                 oauth,
-                path,
                 count
             );
             res.json(data);

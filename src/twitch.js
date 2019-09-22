@@ -60,7 +60,7 @@ export class TwitchClass {
         this.get(`/clips?game_id=${gameId}&started_at=${start}&ended_at=${end}&first=${count}`);
 
     // hardcode the OAuth token as it requires a user that is auth'd with the Twitch site
-    clipData = async slug => {
+    clipUrl = async slug => {
         const clip = await rp({
             uri: 'https://gql.twitch.tv/gql',
             method: 'post',
@@ -90,19 +90,11 @@ export class TwitchClass {
                 (a, b) => b.quality - a.quality
             )[0];
 
-            const data = await rp({ uri: sourceURL, encoding: null, simple: false });
-            return data;
+            return sourceURL;
         }
 
         throw new Error('Failed to get clip data. Is your oauth token valid?');
     };
-
-    thumbnailData = uri =>
-        rp({
-            uri,
-            encoding: null,
-            simple: false
-        });
 
     get = async path => {
         console.log(`GET https://api.twitch.tv/helix${path}`, this.accessToken);

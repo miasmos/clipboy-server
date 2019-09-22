@@ -9,7 +9,7 @@
         "start": "yarn build && yarn server",
         "build": "webpack --mode=development",
         "watch": "webpack --watch --mode=development",
-        "server": "node dist/index.js",
+        "server": "node --max-old-space-size=20000 dist/index.js",
         "server:watch": "nodemon dist/index.js"
     },
     "license": "MIT",
