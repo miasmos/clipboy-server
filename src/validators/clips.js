@@ -11,7 +11,7 @@ export const clips = {
             end: Joi.date().iso(),
             count: Joi.number()
                 .integer()
-                .min(1)
+                .min(10)
                 .max(100)
         })
         .xor('game', 'broadcaster')

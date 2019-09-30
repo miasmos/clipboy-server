@@ -11,10 +11,11 @@ export const getBroadcaster = async (name, start, end, clipCount = 100) => {
     if (exists) {
         id = record.broadcaster_id;
     } else {
-        ({ id } = await Twitch.user(name));
-        if (typeof id === 'undefined') {
+        const user = await Twitch.user(name);
+        if (typeof user === 'undefined') {
             throw new NotFoundError('The supplied broadcaster does not exist');
         }
+        ({ id } = user);
         await db.broadcasters.create(name, id);
     }
 
@@ -35,10 +36,11 @@ export const getGame = async (name, start, end, clipCount = 100) => {
     if (exists) {
         id = record.game_id;
     } else {
-        ({ id } = await Twitch.game(name));
-        if (typeof id === 'undefined') {
+        const game = await Twitch.game(name);
+        if (typeof game === 'undefined') {
             throw new NotFoundError('The supplied game does not exist');
         }
+        ({ id } = game);
         await db.games.create(name, id);
     }
 

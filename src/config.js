@@ -6,3 +6,5 @@ export const DB_PORT = process.env.DB_PORT;
 export const DB_NAME = process.env.DB_NAME;
 export const TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET;
 export const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
+export const HOST = process.env.HOST;
+export const ENVIRONMENT = process.env.NODE_ENV;
