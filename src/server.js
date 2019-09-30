@@ -22,22 +22,8 @@ const requestHandler = async (fn, req, res) => {
 };
 
 export const server = async () => {
+    api.use(helmet());
     if (ENVIRONMENT === 'production') {
-        api.use(helmet());
-        api.use(
-            cors({
-                origin: (origin, callback) => {
-                    const regex = new RegExp(`^https?:\/\/(${HOST})(:|\/)?`, 'g');
-                    const result = regex.exec(origin);
-
-                    if ((result && result.length > 0) || !origin || origin === 'null') {
-                        callback(null, true);
-                        return;
-                    }
-                    callback(new Error('CORS error'));
-                }
-            })
-        );
         api.use(
             rateLimit({
                 windowMs: 60 * 1000,
@@ -51,6 +37,20 @@ export const server = async () => {
             })
         );
     }
+    api.use(
+        cors({
+            origin: (origin, callback) => {
+                const regex = new RegExp(`^https?:\/\/(${HOST})(:|\/)?`, 'g');
+                const result = regex.exec(origin);
+
+                if ((result && result.length > 0) || !origin || origin === 'null') {
+                    callback(null, true);
+                    return;
+                }
+                callback(new Error('CORS error'));
+            }
+        })
+    );
     api.use(bodyparser.json());
     api.get('/', (req, res) => res.json({ alive: true }));
     api.post('/clips', celebrate(validators.clips), (req, res) => requestHandler(clips, req, res));
