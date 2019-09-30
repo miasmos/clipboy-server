@@ -4,7 +4,7 @@ import { Table } from './table';
 export class Broadcasters extends Table {
     create(name, broadcaster_id) {
         return this.model.create({
-            name,
+            name: name.toLowerCase(),
             broadcaster_id
         });
     }
@@ -12,7 +12,7 @@ export class Broadcasters extends Table {
     get(name) {
         return this.model.findOne({
             where: {
-                name
+                name: name.toLowerCase()
             }
         });
     }
