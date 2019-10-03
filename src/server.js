@@ -55,7 +55,11 @@ export const server = async () => {
                 const regex = new RegExp(`^https?:\/\/(${HOST})(:|\/)?`, 'g');
                 const result = regex.exec(origin);
 
-                if ((result && result.length > 0) || !origin || origin === 'null') {
+                if (
+                    (result && result.length > 0) ||
+                    (ENVIRONMENT === 'development' && !origin) ||
+                    origin === 'null'
+                ) {
                     callback(null, true);
                     return;
                 }
@@ -91,13 +95,17 @@ export const server = async () => {
     });
 
     await Twitch.init({ clientId: TWITCH_CLIENT_ID, clientSecret: TWITCH_CLIENT_SECRET });
-    https
-        .createServer(
-            {
-                key: fs.readFileSync(SSL_KEY_PATH),
-                cert: fs.readFileSync(SSL_CERT_PATH)
-            },
-            api
-        )
-        .listen(PORT || 3000, () => console.log(`app listening on port ${PORT || 3000}`));
+    if (ENVIRONMENT === 'development') {
+        api.listen(PORT || 3000, () => console.log(`app listening on port ${PORT || 3000}`));
+    } else {
+        https
+            .createServer(
+                {
+                    key: fs.readFileSync(SSL_KEY_PATH),
+                    cert: fs.readFileSync(SSL_CERT_PATH)
+                },
+                api
+            )
+            .listen(PORT || 3000, () => console.log(`app listening on port ${PORT || 3000}`));
+    }
 };
