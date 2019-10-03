@@ -7,7 +7,8 @@ import {
     HOST,
     ENVIRONMENT,
     SSL_KEY_PATH,
-    SSL_CERT_PATH
+    SSL_CERT_PATH,
+    FORCE_HTTP
 } from './config';
 import * as validators from './validators';
 const fs = require('fs');
@@ -95,8 +96,10 @@ export const server = async () => {
     });
 
     await Twitch.init({ clientId: TWITCH_CLIENT_ID, clientSecret: TWITCH_CLIENT_SECRET });
-    if (ENVIRONMENT === 'development') {
-        api.listen(PORT || 3000, () => console.log(`app listening on port ${PORT || 3000}`));
+    if (FORCE_HTTP === 'true') {
+        api.listen(PORT || 3000, () =>
+            console.log(`app listening on port ${PORT || 3000} in http mode`)
+        );
     } else {
         https
             .createServer(
@@ -106,6 +109,8 @@ export const server = async () => {
                 },
                 api
             )
-            .listen(PORT || 3000, () => console.log(`app listening on port ${PORT || 3000}`));
+            .listen(PORT || 3000, () =>
+                console.log(`app listening on port ${PORT || 3000} in https mode`)
+            );
     }
 };

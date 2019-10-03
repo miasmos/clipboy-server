@@ -10,3 +10,4 @@ export const HOST = process.env.HOST;
 export const ENVIRONMENT = process.env.NODE_ENV;
 export const SSL_KEY_PATH = process.env.SSL_KEY_PATH;
 export const SSL_CERT_PATH = process.env.SSL_CERT_PATH;
+export const FORCE_HTTP = process.env.FORCE_HTTP;
