@@ -13,7 +13,7 @@ export const getBroadcaster = async (name, start, end, clipCount = 100) => {
     } else {
         const user = await Twitch.user(name);
         if (typeof user === 'undefined') {
-            throw new NotFoundError('The supplied broadcaster does not exist');
+            throw new NotFoundError('error.broadcaster.notfound');
         }
         ({ id } = user);
         await db.broadcasters.create(name, id);
@@ -38,7 +38,7 @@ export const getGame = async (name, start, end, clipCount = 100) => {
     } else {
         const game = await Twitch.game(name);
         if (typeof game === 'undefined') {
-            throw new NotFoundError('The supplied game does not exist');
+            throw new NotFoundError('error.game.notfound');
         }
         ({ id } = game);
         await db.games.create(name, id);
@@ -55,7 +55,7 @@ export const getGame = async (name, start, end, clipCount = 100) => {
 
 const filterClips = (clips, clipCount = 100) => {
     if (!clips.data) {
-        throw new HTTPError('Failed to get clips');
+        throw new HTTPError('error.clips.failed');
     }
     const filtered = clips.data
         .filter(clip => {
@@ -75,7 +75,7 @@ const filterClips = (clips, clipCount = 100) => {
         });
 
     if (filtered.length === 0) {
-        throw new HTTPError('No clips found');
+        throw new HTTPError('error.clips.notfound');
     }
 
     return filtered;

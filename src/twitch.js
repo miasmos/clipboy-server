@@ -46,13 +46,20 @@ export class TwitchClass {
 
     get = async path => {
         console.log(`GET https://api.twitch.tv/helix${path}`, this.accessToken);
+
         return rp({
             uri: `https://api.twitch.tv/helix${path}`,
             headers: {
                 Authorization: `Bearer ${this.accessToken}`
             },
-            json: true,
-            simple: false
+            json: true
+        }).catch((error, { statusCode }) => {
+            switch (statusCode) {
+                case 429:
+                    return 'error.network.toomany';
+                default:
+                    return 'error.twitch.generic';
+            }
         });
     };
 
@@ -63,8 +70,14 @@ export class TwitchClass {
             headers: {
                 Authorization: `Bearer ${this.accessToken}`
             },
-            json: true,
-            simple: false
+            json: true
+        }).catch((error, { statusCode }) => {
+            switch (statusCode) {
+                case 429:
+                    return 'error.network.toomany';
+                default:
+                    return 'error.twitch.generic';
+            }
         });
 }
 

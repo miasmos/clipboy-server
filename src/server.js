@@ -1,7 +1,17 @@
 import { Twitch } from './twitch';
 import { celebrate, isCelebrate } from 'celebrate';
-import { PORT, TWITCH_CLIENT_SECRET, TWITCH_CLIENT_ID, HOST, ENVIRONMENT } from './config';
+import {
+    PORT,
+    TWITCH_CLIENT_SECRET,
+    TWITCH_CLIENT_ID,
+    HOST,
+    ENVIRONMENT,
+    SSL_KEY_PATH,
+    SSL_CERT_PATH
+} from './config';
 import * as validators from './validators';
+const fs = require('fs');
+const https = require('https');
 const rateLimit = require('express-rate-limit');
 const express = require('express');
 const bodyparser = require('body-parser');
@@ -31,11 +41,13 @@ export const server = async () => {
                 handler: (req, res) => {
                     res.status(429).json({
                         status: 'error',
-                        error: 'Too many requests, try again in a bit'
+                        error: 'error.network.toomany'
                     });
                 }
             })
         );
+    } else {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
     }
     api.use(
         cors({
@@ -47,7 +59,7 @@ export const server = async () => {
                     callback(null, true);
                     return;
                 }
-                callback(new Error('CORS error'));
+                callback(new Error('error.network.forbidden'));
             }
         })
     );
@@ -56,8 +68,20 @@ export const server = async () => {
     api.post('/clips', celebrate(validators.clips), (req, res) => requestHandler(clips, req, res));
     api.use((error, req, res, next) => {
         if (isCelebrate(error)) {
-            const [{ message }] = error.joi.details;
-            res.status(400).json({ status: 'error', error: message || error });
+            const [{ type, path = [] }] = error.joi.details;
+
+            const field =
+                path.length > 0
+                    ? '.' +
+                      path.reduce((prev, path) => {
+                          if (typeof path !== 'string') {
+                              return prev;
+                          } else {
+                              return `${prev}.${path}`;
+                          }
+                      }, undefined)
+                    : '';
+            res.status(400).json({ status: 'error', error: `error${field}.${type}` });
         } else {
             next(error);
         }
@@ -67,5 +91,13 @@ export const server = async () => {
     });
 
     await Twitch.init({ clientId: TWITCH_CLIENT_ID, clientSecret: TWITCH_CLIENT_SECRET });
-    api.listen(PORT || 3000, () => console.log(`app listening on port ${PORT || 3000}`));
+    https
+        .createServer(
+            {
+                key: fs.readFileSync(SSL_KEY_PATH),
+                cert: fs.readFileSync(SSL_CERT_PATH)
+            },
+            api
+        )
+        .listen(PORT || 3000, () => console.log(`app listening on port ${PORT || 3000}`));
 };

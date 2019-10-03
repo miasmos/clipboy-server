@@ -5,14 +5,18 @@ export const clips = {
         .keys({
             game: Joi.string(),
             broadcaster: Joi.string(),
-            start: Joi.date()
+            startDate: Joi.date()
                 .iso()
-                .required(),
-            end: Joi.date().iso(),
-            count: Joi.number()
+                .required()
+                .max(Joi.ref('endDate')),
+            endDate: Joi.date()
+                .iso()
+                .less('now'),
+            clipCount: Joi.number()
                 .integer()
                 .min(10)
                 .max(100)
+                .required()
         })
         .xor('game', 'broadcaster')
 };
