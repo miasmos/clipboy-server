@@ -1,77 +1,103 @@
-import { getGame } from './app';
-const dayjs = require('dayjs');
+import { Twitch } from './twitch';
+import { celebrate, isCelebrate } from 'celebrate';
+import {
+    PORT,
+    TWITCH_CLIENT_SECRET,
+    TWITCH_CLIENT_ID,
+    HOST,
+    ENVIRONMENT,
+    SSL_KEY_PATH,
+    SSL_CERT_PATH
+} from './config';
+import * as validators from './validators';
+const fs = require('fs');
+const https = require('https');
+const rateLimit = require('express-rate-limit');
 const express = require('express');
 const bodyparser = require('body-parser');
-const app = express();
-const port = 3000;
+const helmet = require('helmet');
+const cors = require('cors');
+const api = express();
 
-export const server = () => {
-    app.use(bodyparser());
-    app.get('/', (req, res) => res.json({ alive: true }));
-    app.post('/clips', async (req, res) => {
-        const { oauth, game, start, count, path, end } = req.body;
-        console.log('GET /clips');
+import { clips } from './api';
 
-        if (!oauth) {
-            res.status(400).json({ code: 1, message: 'oauth token is required' });
-            return;
-        }
-        if (!game) {
-            res.status(400).json({ code: 2, message: 'game is required' });
-            return;
-        }
-        if (!start) {
-            res.status(400).json({ code: 3, message: 'start is required' });
-            return;
-        }
-        if (!path) {
-            res.status(400).json({ code: 4, message: 'path is required' });
-            return;
-        }
+const requestHandler = async (fn, req, res) => {
+    try {
+        const data = await fn(req);
+        res.json({ status: 'success', data });
+    } catch (error) {
+        const { message, status } = error;
+        res.status(status || 500).json({ status: 'error', error: message || error });
+    }
+};
 
-        if (count) {
-            if (isNaN(count)) {
-                res.status(400).json({ code: 5, message: 'count should be an int' });
-                return;
-            } else if (Number(count) < 1 || Number(count) > 100) {
-                res.status(400).json({ code: 6, message: 'count must be between 1 and 100' });
-                return;
+export const server = async () => {
+    api.use(helmet());
+    if (ENVIRONMENT === 'production') {
+        api.use(
+            rateLimit({
+                windowMs: 60 * 1000,
+                max: 2,
+                handler: (req, res) => {
+                    res.status(429).json({
+                        status: 'error',
+                        error: 'error.network.toomany'
+                    });
+                }
+            })
+        );
+    } else {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+    }
+    api.use(
+        cors({
+            origin: (origin, callback) => {
+                const regex = new RegExp(`^https?:\/\/(${HOST})(:|\/)?`, 'g');
+                const result = regex.exec(origin);
+
+                if ((result && result.length > 0) || !origin || origin === 'null') {
+                    callback(null, true);
+                    return;
+                }
+                callback(new Error('error.network.forbidden'));
             }
-        }
+        })
+    );
+    api.use(bodyparser.json());
+    api.get('/', (req, res) => res.json({ alive: true }));
+    api.post('/clips', celebrate(validators.clips), (req, res) => requestHandler(clips, req, res));
+    api.use((error, req, res, next) => {
+        if (isCelebrate(error)) {
+            const [{ type, path = [] }] = error.joi.details;
 
-        let regex = start.match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}/g);
-        if (!(regex && regex.length > 0)) {
-            res.status(400).json({ code: 7, message: 'start must be YYYY-MM-DD' });
-            return;
-        }
-        if (end) {
-            regex = end.match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}/g);
-            if (!(regex && regex.length > 0)) {
-                res.status(400).json({ code: 7, message: 'end must be YYYY-MM-DD' });
-                return;
-            }
-        }
-
-        if (oauth.length !== 30) {
-            res.status(400).json({ code: 8, message: 'oauth must be of length 30' });
-            return;
-        }
-
-        try {
-            const data = await getGame(
-                game,
-                dayjs(start, 'YYYY-MM-DD'),
-                end ? dayjs(end, 'YYYY-MM-DD') : undefined,
-                oauth,
-                path,
-                count
-            );
-            res.json(data);
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: error });
+            const field =
+                path.length > 0
+                    ? '.' +
+                      path.reduce((prev, path) => {
+                          if (typeof path !== 'string') {
+                              return prev;
+                          } else {
+                              return `${prev}.${path}`;
+                          }
+                      }, undefined)
+                    : '';
+            res.status(400).json({ status: 'error', error: `error${field}.${type}` });
+        } else {
+            next(error);
         }
     });
+    api.all('*', (req, res) => {
+        res.status(404).json({ status: 'error' });
+    });
 
-    app.listen(port, () => console.log(`app listening on port ${port}`));
+    await Twitch.init({ clientId: TWITCH_CLIENT_ID, clientSecret: TWITCH_CLIENT_SECRET });
+    https
+        .createServer(
+            {
+                key: fs.readFileSync(SSL_KEY_PATH),
+                cert: fs.readFileSync(SSL_CERT_PATH)
+            },
+            api
+        )
+        .listen(PORT || 3000, () => console.log(`app listening on port ${PORT || 3000}`));
 };
