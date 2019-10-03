@@ -1,50 +1,44 @@
 {
-  "name": "twitch-clip-scraper",
-  "version": "1.0.0",
-  "main": "dist/index.js",
-  "scripts": {
-    "start": "yarn build && yarn server",
-    "build": "webpack --mode=production",
-    "watch": "webpack --watch --mode=development",
-    "server": "node dist/index.js",
-    "server:watch": "nodemon dist/index.js"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn build && git stage dist/index.js"
+    "name": "twitch-clip-scraper",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "scripts": {
+        "start": "yarn build && yarn server",
+        "build": "webpack --mode=production",
+        "watch": "webpack --watch --mode=development",
+        "server": "node dist/index.js",
+        "server:watch": "nodemon dist/index.js"
+    },
+    "license": "MIT",
+    "dependencies": {
+        "body-parser": "^1.19.0",
+        "celebrate": "^10.0.1",
+        "cors": "^2.8.5",
+        "dayjs": "^1.8.16",
+        "express": "^4.17.1",
+        "express-rate-limit": "^5.0.0",
+        "helmet": "^3.21.1",
+        "joi": "^14.3.1",
+        "pg": "^7.12.1",
+        "pg-hstore": "^2.3.3",
+        "request": "^2.88.0",
+        "request-promise": "^4.2.4",
+        "sequelize": "^5.19.1",
+        "yargs": "^14.0.0"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.6.0",
+        "@babel/plugin-proposal-class-properties": "^7.5.5",
+        "@babel/polyfill": "^7.6.0",
+        "@babel/preset-env": "^7.6.0",
+        "@babel/register": "^7.6.0",
+        "babel-loader": "^8.0.6",
+        "dotenv": "^8.1.0",
+        "dotenv-webpack": "^1.7.0",
+        "nodemon": "^1.19.2",
+        "prettier": "^1.18.2",
+        "sequelize-cli": "^5.5.1",
+        "webpack": "^4.39.3",
+        "webpack-cli": "^3.3.8"
     }
-  },
-  "license": "MIT",
-  "dependencies": {
-    "body-parser": "^1.19.0",
-    "celebrate": "^10.0.1",
-    "cors": "^2.8.5",
-    "dayjs": "^1.8.16",
-    "express": "^4.17.1",
-    "express-rate-limit": "^5.0.0",
-    "helmet": "^3.21.1",
-    "joi": "^14.3.1",
-    "pg": "^7.12.1",
-    "pg-hstore": "^2.3.3",
-    "request": "^2.88.0",
-    "request-promise": "^4.2.4",
-    "sequelize": "^5.19.1",
-    "yargs": "^14.0.0"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.6.0",
-    "@babel/plugin-proposal-class-properties": "^7.5.5",
-    "@babel/polyfill": "^7.6.0",
-    "@babel/preset-env": "^7.6.0",
-    "@babel/register": "^7.6.0",
-    "babel-loader": "^8.0.6",
-    "dotenv": "^8.1.0",
-    "dotenv-webpack": "^1.7.0",
-    "husky": "^3.0.8",
-    "nodemon": "^1.19.2",
-    "prettier": "^1.18.2",
-    "sequelize-cli": "^5.5.1",
-    "webpack": "^4.39.3",
-    "webpack-cli": "^3.3.8"
-  }
 }

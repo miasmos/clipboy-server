@@ -15,5 +15,8 @@ module.exports = {
     plugins: [new Dotenv(), new webpack.IgnorePlugin(/^pg-native$/)],
     module: {
         rules: [{ test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' }]
+    },
+    optimization: {
+        minimize: false
     }
 };
