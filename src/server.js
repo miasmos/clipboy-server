@@ -30,7 +30,7 @@ const requestHandler = async (fn, req, res) => {
         let { message } = error;
         const { status } = error;
         if (!message) {
-            const isKeyedError = error.match(/^([a-zA-Z]+\.)+[a-zA-Z]+$/g);
+            const isKeyedError = error.match(/^([a-zA-Z]+\.)+[a-zA-Z]+$/g).length > 0;
             message = isKeyedError ? error : 'error.generic';
         }
         console.error(message, error);
@@ -80,21 +80,10 @@ export const server = async () => {
     api.use((error, req, res, next) => {
         if (isCelebrate(error)) {
             const [{ type, path = [] }] = error.joi.details;
-
-            const field =
-                path.length > 0
-                    ? '.' +
-                      path.reduce((prev, path) => {
-                          if (typeof path !== 'string') {
-                              return prev;
-                          } else {
-                              return `${prev}.${path}`;
-                          }
-                      }, undefined)
-                    : '';
-            res.status(400).json({ status: 'error', error: `error${field}.${type}` });
-        } else {
-            next(error);
+            const field = path.join('.');
+            res.status(400).json({ status: 'error', error: `error.${field}.${type}` });
+        } else if (error) {
+            res.status(500).json({ status: 'error', error: error.message });
         }
     });
     api.all('*', (req, res) => {

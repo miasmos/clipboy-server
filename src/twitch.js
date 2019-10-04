@@ -1,4 +1,5 @@
 const rp = require('request-promise');
+import { TooManyRequestsError, HTTPError } from './errors';
 
 export class TwitchClass {
     accessToken;
@@ -53,12 +54,12 @@ export class TwitchClass {
                 Authorization: `Bearer ${this.accessToken}`
             },
             json: true
-        }).catch((error, { statusCode }) => {
+        }).catch((error, { statusCode = 500 } = {}) => {
             switch (statusCode) {
                 case 429:
-                    return 'error.network.toomany';
+                    throw new TooManyRequestsError('error.network.toomany');
                 default:
-                    return 'error.twitch.generic';
+                    throw new HTTPError('error.twitch.generic');
             }
         });
     };
@@ -71,12 +72,12 @@ export class TwitchClass {
                 Authorization: `Bearer ${this.accessToken}`
             },
             json: true
-        }).catch((error, { statusCode }) => {
+        }).catch((error, { statusCode = 500 } = {}) => {
             switch (statusCode) {
                 case 429:
-                    return 'error.network.toomany';
+                    throw new TooManyRequestsError('error.network.toomany');
                 default:
-                    return 'error.twitch.generic';
+                    throw new HTTPError('error.twitch.generic');
             }
         });
 }
