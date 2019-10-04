@@ -57,12 +57,12 @@ const filterClips = (clips, clipCount = 100) => {
     if (!clips.data) {
         throw new HTTPError('error.clips.failed');
     }
+
     const filtered = clips.data
         .filter(clip => {
             const hasDomain = clip.title.match(/\.(com|net|ca)/i);
             return !(hasDomain && hasDomain.length > 0);
         })
-        .filter(clip => clip.language === 'en')
         .sort((a, b) => b.view_count - a.view_count)
         .slice(0, clipCount)
         .map(({ embed_url, creator_id, creator_name, video_id, game_id, language, ...data }) => {

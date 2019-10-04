@@ -27,7 +27,13 @@ const requestHandler = async (fn, req, res) => {
         const data = await fn(req);
         res.json({ status: 'success', data });
     } catch (error) {
-        const { message, status } = error;
+        let { message } = error;
+        const { status } = error;
+        if (!message) {
+            const isKeyedError = error.match(/^([a-zA-Z]+\.)+[a-zA-Z]+$/g);
+            message = isKeyedError ? error : 'error.generic';
+        }
+        console.error(message, error);
         res.status(status || 500).json({ status: 'error', error: message || error });
     }
 };
