@@ -20,7 +20,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const api = express();
 
-import { clips } from './api';
+import { clips } from './api/twitch';
 
 const requestHandler = async (fn, req, res) => {
     try {
@@ -76,7 +76,9 @@ export const server = async () => {
     );
     api.use(bodyparser.json());
     api.get('/', (req, res) => res.json({ alive: true }));
-    api.post('/clips', celebrate(validators.clips), (req, res) => requestHandler(clips, req, res));
+    api.post('/twitch/clips', celebrate(validators.clips), (req, res) =>
+        requestHandler(clips, req, res)
+    );
     api.use((error, req, res, next) => {
         if (isCelebrate(error)) {
             const [{ type, path = [] }] = error.joi.details;

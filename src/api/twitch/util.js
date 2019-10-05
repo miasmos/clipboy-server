@@ -1,7 +1,7 @@
-import { Twitch } from './twitch';
+import { Twitch } from '../../twitch';
 import dayjs from 'dayjs';
-import { db } from './db';
-import { HTTPError, NotFoundError } from './errors';
+import { db } from '../../db';
+import { HTTPError, NotFoundError } from '../../errors';
 
 export const getBroadcaster = async (name, start, end, clipCount = 100) => {
     const record = await db.broadcasters.get(name);

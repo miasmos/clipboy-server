@@ -9,8 +9,8 @@
         "watch": "webpack --watch --mode=development",
         "server": "node dist/index.js",
         "server:watch": "nodemon dist/index.js",
-        "deploy": "git push production master",
-        "deploy:qa": "git push qa master"
+        "deploy": "yarn build && git push production master",
+        "deploy:qa": "yarn build && git push qa master"
     },
     "license": "MIT",
     "dependencies": {

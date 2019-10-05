@@ -1,4 +1,4 @@
-import { getGame, getBroadcaster } from '../util';
+import { getGame, getBroadcaster } from './util';
 const dayjs = require('dayjs');
 
 export const clips = async req => {
