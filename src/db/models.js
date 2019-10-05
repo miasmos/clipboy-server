@@ -5,7 +5,7 @@ export class Models {
         this.connection = connection;
 
         this.broadcasters = connection.define(
-            'Broadcasters',
+            'twitch_broadcasters',
             {
                 id: {
                     type: Sequelize.UUID,
@@ -31,7 +31,7 @@ export class Models {
         this.broadcasters.sync();
 
         this.games = connection.define(
-            'Games',
+            'twitch_games',
             {
                 id: {
                     type: Sequelize.UUID,
@@ -55,5 +55,48 @@ export class Models {
             }
         );
         this.games.sync();
+
+        this.releases = connection.define(
+            'releases',
+            {
+                id: {
+                    type: Sequelize.UUID,
+                    defaultValue: Sequelize.UUIDV4,
+                    field: 'id',
+                    primaryKey: true
+                },
+                version: {
+                    type: Sequelize.TEXT,
+                    field: 'version',
+                    allowNull: false
+                },
+                buildId: {
+                    type: Sequelize.SMALLINT,
+                    field: 'buildId',
+                    allowNull: false
+                },
+                project: {
+                    type: Sequelize.STRING,
+                    field: 'project',
+                    allowNull: false
+                },
+                payload: {
+                    type: Sequelize.BLOB,
+                    field: 'payload'
+                },
+                notes: {
+                    type: Sequelize.JSON,
+                    field: 'notes'
+                },
+                name: {
+                    type: Sequelize.TEXT,
+                    field: 'name'
+                }
+            },
+            {
+                freezeTableName: true
+            }
+        );
+        this.releases.sync();
     }
 }

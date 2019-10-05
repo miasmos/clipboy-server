@@ -9,8 +9,8 @@
         "watch": "webpack --watch --mode=development",
         "server": "node dist/index.js",
         "server:watch": "nodemon dist/index.js",
-        "deploy": "yarn build && git push production master",
-        "deploy:qa": "yarn build && git push qa master"
+        "deploy": "git push production master",
+        "deploy:qa": "git push qa master"
     },
     "license": "MIT",
     "dependencies": {
@@ -22,6 +22,7 @@
         "express-rate-limit": "^5.0.0",
         "helmet": "^3.21.1",
         "joi": "^14.3.1",
+        "jsontoxml": "^1.0.1",
         "pg": "^7.12.1",
         "pg-hstore": "^2.3.3",
         "request": "^2.88.0",

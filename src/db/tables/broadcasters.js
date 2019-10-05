@@ -1,4 +1,4 @@
-const Sequelize = require('sequelize');
+import Sequelize from 'sequelize';
 import { Table } from './table';
 
 export class Broadcasters extends Table {
