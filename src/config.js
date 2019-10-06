@@ -13,3 +13,4 @@ export const SSL_CERT_PATH = process.env.SSL_CERT_PATH;
 export const FORCE_HTTP = process.env.FORCE_HTTP;
 export const BEARER_TOKEN = process.env.BEARER_TOKEN;
 export const RELEASE_PATH = process.env.RELEASE_PATH;
+export const PROTOCOL = process.env.FORCE_HTTP ? 'http' : 'https';

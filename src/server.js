@@ -18,16 +18,22 @@ if (typeof BEARER_TOKEN === 'undefined') {
 }
 
 const fs = require('fs');
+const path = require('path');
 const https = require('https');
 const rateLimit = require('express-rate-limit');
 const express = require('express');
 const bodyparser = require('body-parser');
 const helmet = require('helmet');
 const cors = require('cors');
+const morgan = require('morgan');
 const api = express();
 
 export const server = async () => {
+    api.engine('pug', require('pug').__express);
+    api.set('views', path.resolve(__dirname, '../views'));
+    api.set('view engine', 'pug');
     api.use(helmet());
+    api.use(morgan('dev'));
     if (ENVIRONMENT === 'production') {
         api.use(
             rateLimit({
@@ -63,10 +69,6 @@ export const server = async () => {
         })
     );
     api.use(bodyparser.json());
-    api.use((error, req, res, next) => {
-        res.xml = xmlHandler.bind(xmlHandler, req, res);
-        next(error);
-    });
     routes(api);
     api.use((error, req, res, next) => {
         if (isCelebrate(error)) {

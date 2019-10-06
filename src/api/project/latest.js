@@ -8,6 +8,9 @@ export const latest = async (req, res) => {
         const { payload } = entry;
 
         if (payload) {
+            res.set('Content-Type', 'application/octet-stream');
+            res.set('Content-Length', payload.length);
+            res.set('Content-Disposition', `attachment;filename=package.zxp`);
             return payload;
         }
     }

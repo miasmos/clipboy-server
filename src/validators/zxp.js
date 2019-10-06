@@ -8,13 +8,12 @@ export const zxp = {
         authorization: Joi.string()
             .valid(`Bearer ${BEARER_TOKEN}`)
             .required(),
-        'X-VERSION': Joi.string()
+        'x-version': Joi.string()
             .regex(semverRegex)
             .required(),
-        'X-PROJECT': Joi.string()
+        'x-project': Joi.string()
             .min(1)
             .max(36)
             .required()
-    }).options({ allowUnknown: true }),
-    body: Joi.string().required()
+    }).options({ allowUnknown: true })
 };

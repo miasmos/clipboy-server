@@ -45,10 +45,8 @@ export class TwitchClass {
             `/clips?broadcaster_id=${broadcasterId}&started_at=${start}&ended_at=${end}&first=${count}`
         );
 
-    get = async path => {
-        console.log(`GET https://api.twitch.tv/helix${path}`, this.accessToken);
-
-        return rp({
+    get = async path =>
+        rp({
             uri: `https://api.twitch.tv/helix${path}`,
             headers: {
                 Authorization: `Bearer ${this.accessToken}`
@@ -62,7 +60,6 @@ export class TwitchClass {
                     throw new HTTPError('error.twitch.generic');
             }
         });
-    };
 
     post = async path =>
         rp({

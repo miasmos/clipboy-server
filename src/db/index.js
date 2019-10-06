@@ -5,6 +5,7 @@ import { Models } from './models';
 import * as Tables from './tables';
 
 let instance = undefined;
+delete pg.native; // fixes compile-time issue
 
 class DbClass {
     constructor({ user, password, host, port, database }) {

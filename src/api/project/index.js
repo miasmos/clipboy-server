@@ -1,3 +1,4 @@
 export { latest } from './latest';
-export { manifest } from '../project/manifest';
-export { version } from '../project/version';
+export { manifest } from './manifest';
+export { version } from './version';
+export { releaseNotes } from './releaseNotes';
