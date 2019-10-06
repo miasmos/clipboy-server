@@ -8,6 +8,10 @@ const rawbody = require('raw-body');
 const contentType = require('content-type');
 
 const jsonResponseHandler = async (fn, req, res) => {
+    if (res.headersSent) {
+        return;
+    }
+
     try {
         const data = (await fn(req, res)) || {};
         res.json({ status: 'success', data });
@@ -62,7 +66,7 @@ export const routes = api => {
         genericResponseHandler(zxp, req, res)
     );
     api.post('/deploy/info', celebrate(validators.info), (req, res) =>
-        jsonResponseHandler(info, req, res)
+        genericResponseHandler(info, req, res)
     );
     api.get('/:project/latest', celebrate(validators.latest), (req, res) =>
         genericResponseHandler(latest, req, res)

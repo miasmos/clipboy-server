@@ -27,8 +27,7 @@ export const manifest = async (req, res) => {
                             pug.render(template, {
                                 version,
                                 notes,
-                                name,
-                                download: downloadLink
+                                name
                             })
                         )
                     }
