@@ -4,8 +4,9 @@ import { HOST, PROTOCOL } from '../../config';
 
 const pug = require('pug');
 const fs = require('fs');
+const path = require('path');
 const jsonxml = require('jsontoxml');
-const template = fs.readFileSync('./views/release-notes.pug').toString();
+const template = fs.readFileSync(path.resolve(__dirname, '../views/release-notes.pug')).toString();
 
 export const manifest = async (req, res) => {
     const { project } = req.params;
