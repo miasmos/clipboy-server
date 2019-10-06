@@ -13,7 +13,7 @@ export const releaseNotes = async (req, res) => {
         if (version && payload) {
             res.render('release-notes', {
                 ...entry,
-                download: `${PROTOCOL}://${HOST}:${PORT}/${project}/latest`
+                download: `${PROTOCOL}://${HOST}:${PORT}/project/${project}/latest`
             });
             return;
         }

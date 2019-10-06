@@ -23,7 +23,7 @@ export const manifest = async (req, res) => {
                     { name: 'download', text: downloadLink },
                     {
                         name: 'description',
-                        attrs: { url: `${PROTOCOL}://${HOST}/${project}/release-notes` },
+                        attrs: { url: `${PROTOCOL}://${HOST}/project/${project}/release-notes` },
                         text: jsonxml.cdata(
                             pug.render(template, {
                                 version,

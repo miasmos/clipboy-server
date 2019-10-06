@@ -68,16 +68,16 @@ export const routes = api => {
     api.post('/deploy/info', celebrate(validators.info), (req, res) =>
         genericResponseHandler(info, req, res)
     );
-    api.get('/:project/latest', celebrate(validators.latest), (req, res) =>
+    api.get('/project/:project/latest', celebrate(validators.latest), (req, res) =>
         genericResponseHandler(latest, req, res)
     );
-    api.get('/:project/manifest', celebrate(validators.manifest), (req, res) =>
+    api.get('/project/:project/manifest', celebrate(validators.manifest), (req, res) =>
         genericResponseHandler(manifest, req, res)
     );
-    api.get('/:project/version', celebrate(validators.version), (req, res) =>
+    api.get('/project/:project/version', celebrate(validators.version), (req, res) =>
         genericResponseHandler(version, req, res)
     );
-    api.get('/:project/release-notes', celebrate(validators.version), (req, res) =>
+    api.get('/project/:project/release-notes', celebrate(validators.version), (req, res) =>
         genericResponseHandler(releaseNotes, req, res)
     );
 };

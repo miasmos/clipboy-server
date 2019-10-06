@@ -29,22 +29,41 @@ const morgan = require('morgan');
 const api = express();
 
 export const server = async () => {
+    api.enable('trust proxy');
     api.engine('pug', require('pug').__express);
     api.set('views', path.resolve(__dirname, '../views'));
     api.set('view engine', 'pug');
     api.use(helmet());
     api.use(morgan('dev'));
     if (ENVIRONMENT === 'production') {
+        const limiterOptions = {
+            windowMs: 60 * 1000,
+            handler: (req, res) => {
+                res.status(429).json({
+                    status: 'error',
+                    error: 'error.network.toomany'
+                });
+            }
+        };
         api.use(
+            '/twitch',
             rateLimit({
-                windowMs: 60 * 1000,
-                max: 2,
-                handler: (req, res) => {
-                    res.status(429).json({
-                        status: 'error',
-                        error: 'error.network.toomany'
-                    });
-                }
+                ...limiterOptions,
+                max: 100
+            })
+        );
+        api.use(
+            '/project',
+            rateLimit({
+                ...limiterOptions,
+                max: 100
+            })
+        );
+        api.use(
+            '/deploy',
+            rateLimit({
+                ...limiterOptions,
+                max: 6
             })
         );
     } else {
