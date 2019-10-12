@@ -19,5 +19,5 @@ export const releaseNotes = async (req, res) => {
         }
     }
 
-    throw new NotFoundError();
+    throw new NotFoundError('error.generic');
 };

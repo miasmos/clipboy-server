@@ -40,5 +40,5 @@ export const manifest = async (req, res) => {
         }
     }
 
-    throw new NotFoundError();
+    throw new NotFoundError('error.generic');
 };

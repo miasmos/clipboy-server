@@ -15,5 +15,5 @@ export const latest = async (req, res) => {
         }
     }
 
-    throw new NotFoundError();
+    throw new NotFoundError('error.generic');
 };

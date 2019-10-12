@@ -28,6 +28,16 @@ export class Releases extends Table {
         });
     }
 
+    all(project) {
+        return this.model.findAll({
+            attributes: ['id', 'version', 'notes', 'name', 'updatedAt'],
+            where: { project, payload: { [Op.ne]: 'undefined' } },
+            order: [['buildId', 'DESC']],
+            limit: 5,
+            raw: true
+        });
+    }
+
     get(project, version) {
         return this.model.findOne({
             where: {
