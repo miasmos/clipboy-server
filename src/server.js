@@ -6,6 +6,7 @@ import {
     TWITCH_CLIENT_SECRET,
     TWITCH_CLIENT_ID,
     HOST,
+    DOMAIN,
     ENVIRONMENT,
     SSL_KEY_PATH,
     SSL_CERT_PATH,
@@ -72,7 +73,10 @@ export const server = async () => {
     api.use(
         cors({
             origin: (origin, callback) => {
-                const regex = new RegExp(`^https?:\/\/(${HOST})(:|\/)?`, 'g');
+                const regex = new RegExp(
+                    `^https?:\/\/([0-9a-zA-Z]*\.)?${DOMAIN.replace(/\./, '\\.')}(:|\/)?`,
+                    'g'
+                );
                 const result = regex.exec(origin);
 
                 if (
