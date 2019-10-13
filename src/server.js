@@ -5,7 +5,6 @@ import {
     PORT,
     TWITCH_CLIENT_SECRET,
     TWITCH_CLIENT_ID,
-    HOST,
     DOMAIN,
     ENVIRONMENT,
     SSL_KEY_PATH,

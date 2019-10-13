@@ -1,7 +1,8 @@
 {
-    "name": "twitch-clip-scraper",
+    "name": "clipboy-server",
     "version": "1.0.0",
     "main": "dist/index.js",
+    "author": "Clipboy Software Inc.",
     "scripts": {
         "start": "yarn build && yarn server",
         "build": "webpack --mode=production",
@@ -12,7 +13,7 @@
         "deploy": "git push production master",
         "deploy:qa": "git push qa master"
     },
-    "license": "MIT",
+    "license": "NONE",
     "dependencies": {
         "body-parser": "^1.19.0",
         "celebrate": "^10.0.1",
