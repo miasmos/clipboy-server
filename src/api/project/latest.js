@@ -10,7 +10,7 @@ export const latest = async (req, res) => {
         if (payload) {
             res.set('Content-Type', 'application/octet-stream');
             res.set('Content-Length', payload.length);
-            res.set('Content-Disposition', `attachment;filename=package.zxp`);
+            res.set('Content-Disposition', `attachment;filename=package.zip`);
             return payload;
         }
     }

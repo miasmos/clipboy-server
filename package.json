@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "main": "dist/index.js",
     "author": "Clipboy Software Inc.",
+    "repository": "git@github.com:stephenpoole/clipboy-server.git",
     "scripts": {
         "start": "yarn build && yarn server",
         "build": "webpack --mode=production",
