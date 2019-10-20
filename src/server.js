@@ -36,6 +36,23 @@ export const server = async () => {
     api.use(helmet());
     api.use(morgan('dev'));
     if (ENVIRONMENT === 'production') {
+        const corsResponse = (origin, callback) => {
+            const regex = new RegExp(
+                `^https?:\/\/([0-9a-zA-Z]*\.)?${DOMAIN.replace(/\./, '\\.')}(:|\/)?`,
+                'g'
+            );
+            const result = regex.exec(origin);
+
+            if (
+                (result && result.length > 0) ||
+                (ENVIRONMENT === 'development' && !origin) ||
+                origin === 'null'
+            ) {
+                callback(null, true);
+                return;
+            }
+            callback(new Error('error.network.forbidden'));
+        };
         const limiterOptions = {
             windowMs: 60 * 1000,
             handler: (req, res) => {
@@ -50,7 +67,8 @@ export const server = async () => {
             rateLimit({
                 ...limiterOptions,
                 max: 100
-            })
+            }),
+            cors(corsResponse)
         );
         api.use(
             '/project',
@@ -69,27 +87,6 @@ export const server = async () => {
     } else {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
     }
-    api.use(
-        cors({
-            origin: (origin, callback) => {
-                const regex = new RegExp(
-                    `^https?:\/\/([0-9a-zA-Z]*\.)?${DOMAIN.replace(/\./, '\\.')}(:|\/)?`,
-                    'g'
-                );
-                const result = regex.exec(origin);
-
-                if (
-                    (result && result.length > 0) ||
-                    (ENVIRONMENT === 'development' && !origin) ||
-                    origin === 'null'
-                ) {
-                    callback(null, true);
-                    return;
-                }
-                callback(new Error('error.network.forbidden'));
-            }
-        })
-    );
     api.use(bodyparser.json());
     routes(api);
     api.use((error, req, res, next) => {
