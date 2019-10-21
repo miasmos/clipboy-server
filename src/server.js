@@ -35,6 +35,7 @@ export const server = async () => {
     api.set('view engine', 'pug');
     api.use(helmet());
     api.use(morgan('dev'));
+    api.use(cors());
     if (ENVIRONMENT === 'production') {
         const corsResponse = (origin, callback) => {
             const regex = new RegExp(
@@ -69,20 +70,6 @@ export const server = async () => {
                 max: 100
             }),
             cors({ origin: corsResponse })
-        );
-        api.use(
-            '/project',
-            rateLimit({
-                ...limiterOptions,
-                max: 100
-            })
-        );
-        api.use(
-            '/deploy',
-            rateLimit({
-                ...limiterOptions,
-                max: 6
-            })
         );
     } else {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
