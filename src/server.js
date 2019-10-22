@@ -78,7 +78,7 @@ export const server = async () => {
                 ...limiterOptions,
                 max: 2
             }),
-            cors({ origin: HOST })
+            cors({ origin: corsResponse })
         );
     } else {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
