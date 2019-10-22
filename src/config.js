@@ -15,3 +15,7 @@ export const FORCE_HTTP = process.env.FORCE_HTTP;
 export const BEARER_TOKEN = process.env.BEARER_TOKEN;
 export const RELEASE_PATH = process.env.RELEASE_PATH;
 export const PROTOCOL = process.env.FORCE_HTTP ? 'http' : 'https';
+export const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
+export const SENDGRID_SUBJECT = 'CLIPBOY.DEV SUPPORT REQUEST';
+export const SENDGRID_FROM = 'site@clipboy.dev';
+export const SENDGRID_TO = 'support@clipboy.dev';

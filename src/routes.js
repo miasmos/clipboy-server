@@ -2,7 +2,8 @@ import { celebrate } from 'celebrate';
 import * as validators from './validators';
 import { clips } from './api/twitch';
 import { info, zxp } from './api/deploy';
-import { manifest, version, latest, releaseNotes,patchNotes } from './api/project';
+import { send } from './api/email';
+import { manifest, version, latest, releaseNotes, patchNotes } from './api/project';
 
 const rawbody = require('raw-body');
 const contentType = require('content-type');
@@ -86,4 +87,7 @@ export const routes = api => {
     api.get('/project/:project/patch-notes', celebrate(validators.version), (req, res) =>
         responseHandler(patchNotes, req, res)
     );
+    api.post('/email/send', celebrate(validators.email), (req, res) => {
+        responseHandler(send, req, res);
+    });
 };

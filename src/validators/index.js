@@ -4,3 +4,4 @@ export { info } from './info';
 export { latest } from './latest';
 export { version } from './version';
 export { manifest } from './manifest';
+export { email } from './email';

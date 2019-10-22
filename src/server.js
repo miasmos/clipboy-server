@@ -6,6 +6,7 @@ import {
     TWITCH_CLIENT_SECRET,
     TWITCH_CLIENT_ID,
     DOMAIN,
+    HOST,
     ENVIRONMENT,
     SSL_KEY_PATH,
     SSL_CERT_PATH,
@@ -70,6 +71,14 @@ export const server = async () => {
                 max: 100
             }),
             cors({ origin: corsResponse })
+        );
+        api.use(
+            '/email',
+            rateLimit({
+                ...limiterOptions,
+                max: 2
+            }),
+            cors({ origin: HOST })
         );
     } else {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
