@@ -6,7 +6,6 @@ import {
     TWITCH_CLIENT_SECRET,
     TWITCH_CLIENT_ID,
     DOMAIN,
-    HOST,
     ENVIRONMENT,
     SSL_KEY_PATH,
     SSL_CERT_PATH,
@@ -64,11 +63,25 @@ export const server = async () => {
                 });
             }
         };
+        const keyGenerator = ({ ip, headers }) => {
+            const { 'x-client-id': clientId } = headers;
+            return `${ip}:${clientId}`;
+        };
         api.use(
             '/twitch',
             rateLimit({
                 ...limiterOptions,
-                max: 100
+                keyGenerator,
+                max: 2
+            }),
+            cors({ origin: corsResponse })
+        );
+        api.use(
+            '/tiktok',
+            rateLimit({
+                ...limiterOptions,
+                keyGenerator,
+                max: 2
             }),
             cors({ origin: corsResponse })
         );

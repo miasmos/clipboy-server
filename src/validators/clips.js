@@ -1,6 +1,11 @@
 import { Joi } from 'celebrate';
 
 export const clips = {
+    headers: Joi.object({
+        'x-client-id': Joi.string()
+            .length(11)
+            .required()
+    }).unknown(),
     body: Joi.object({
         game: Joi.string(),
         broadcaster: Joi.string(),

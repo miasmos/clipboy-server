@@ -1,6 +1,7 @@
 import { celebrate } from 'celebrate';
 import * as validators from './validators';
 import { clips } from './api/twitch';
+import { feed } from './api/tiktok';
 import { info, zxp } from './api/deploy';
 import { send } from './api/email';
 import { manifest, version, latest, releaseNotes, patchNotes } from './api/project';
@@ -66,6 +67,9 @@ export const routes = api => {
     api.post('/twitch/clips', celebrate(validators.clips), (req, res) =>
         responseHandler(clips, req, res)
     );
+    api.post('/tiktok/feed', celebrate(validators.feed), (req, res) => {
+        responseHandler(feed, req, res);
+    });
     api.put('/deploy/zxp', celebrate(validators.zxp), binaryRequestHandler, (req, res) =>
         responseHandler(zxp, req, res)
     );
